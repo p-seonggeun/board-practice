@@ -3,6 +3,7 @@ package hello.practice.domain.user.controller;
 import hello.practice.domain.user.dto.request.UserSignUpRequestDto;
 import hello.practice.domain.user.dto.response.UserSignUpResponseDto;
 import hello.practice.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserSignUpResponseDto> signUp(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
+    public ResponseEntity<UserSignUpResponseDto> signUp(@Valid @RequestBody UserSignUpRequestDto userSignUpRequestDto) {
 
         UserSignUpResponseDto userSignUpResponseDto = userService.signUp(userSignUpRequestDto);
 

@@ -1,0 +1,23 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: ${H2_URL}
+    username: ${H2_USERNAME}
+    password: ${H2_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    open-in-view: false
+#        show_sql: true
+logging:
+  level:
+    org.hibernate.sql: debug
+

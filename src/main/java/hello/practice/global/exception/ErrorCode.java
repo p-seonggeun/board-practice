@@ -10,7 +10,10 @@ public enum ErrorCode {
     // 계정
     ALREADY_EXISTS_USERNAME(400, "ACCOUNT-001", "이미 존재하는 아이디일 경우"),
     ALREADY_EXISTS_EMAIL(400, "ACCOUNT-002", "이미 존재하는 이메일일 경우"),
-    ALREADY_EXISTS_NICKNAME(400, "ACCOUNT-003", "이미 존재하는 닉네임일 경우");
+    ALREADY_EXISTS_NICKNAME(400, "ACCOUNT-003", "이미 존재하는 닉네임일 경우"),
+    UNAUTHORIZED(401, "ACCOUNT-004", "인증에 실패한 경우"),
+    ACCOUNT_NOT_FOUND(404, "ACCOUNT-005", "계정을 찾을 수 없는 경우");
+
 
     private final int status;
     private final String code;

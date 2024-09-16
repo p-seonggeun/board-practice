@@ -4,10 +4,14 @@ import hello.practice.domain.common.BaseTimeEntity;
 import hello.practice.domain.user.dto.response.UserSignUpResponseDto;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Table(name = "users")
 @Entity
+@Getter
+@ToString(exclude = {})
 @NoArgsConstructor
 public class User extends BaseTimeEntity {
 

@@ -1,6 +1,8 @@
 package hello.practice.global.config;
 
-import hello.practice.global.auth.LoginFilter;
+import hello.practice.domain.token.repository.RefreshTokenRepository;
+import hello.practice.global.auth.CustomLoginFilter;
+import hello.practice.global.auth.CustomLogoutFilter;
 import hello.practice.global.jwt.JwtFilter;
 import hello.practice.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -22,6 +25,7 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -45,18 +49,21 @@ public class SecurityConfig {
         httpSecurity
                 .httpBasic((configurer) -> configurer.disable());
 
-        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
-        loginFilter.setFilterProcessesUrl("/signin");
+        CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository);
+        customLoginFilter.setFilterProcessesUrl("/signin");
 
         httpSecurity
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
 
         httpSecurity
-                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil), CustomLoginFilter.class);
+
+        httpSecurity
+                .addFilterAt(customLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity
                 .authorizeHttpRequests((configurer) ->
-                        configurer.requestMatchers("/", "/signin", "/signup").permitAll()
+                        configurer.requestMatchers("/", "/signin", "/signup", "/reissue", "/signout").permitAll()
                                 .requestMatchers("/user").hasRole("USER")
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated());

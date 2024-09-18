@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 토큰이 없거나 Bearer로 시작하지 않으면 에러 처리
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            handleErrorResponse(response, ErrorCode.ACCESS_TOKEN_NOT_FOUND, "토큰이 존재하지 않습니다.");
+            handleErrorResponse(response, ErrorCode.ACCESS_TOKEN_NOT_FOUND, "액세스 토큰이 존재하지 않습니다.");
             return;
         }
 
@@ -43,7 +43,14 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            handleErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED, "토큰이 만료되었습니다.");
+            handleErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED, "액세스 토큰이 만료되었습니다.");
+            return;
+        }
+
+        // 유효하지 않은 액세스 토큰일 경우
+        String category = jwtUtil.getCategory(accessToken);
+        if (!category.equals("Access")) {
+            handleErrorResponse(response, ErrorCode.INVALID_ACCESS_TOKEN, "유효하지 않은 액세스 토큰입니다.");
             return;
         }
 
@@ -67,7 +74,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // 특정 경로를 제외시킴
         String path = request.getRequestURI();
-        return path.equals("/signin") || path.equals("/signup") || path.equals("/");
+        return path.equals("/signin") || path.equals("/signup") || path.equals("/") || path.equals("/reissue");
     }
 
     private void handleErrorResponse(HttpServletResponse response, ErrorCode errorCode, String message) throws IOException {

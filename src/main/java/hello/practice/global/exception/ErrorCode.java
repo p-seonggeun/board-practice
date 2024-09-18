@@ -15,9 +15,12 @@ public enum ErrorCode {
     ACCOUNT_NOT_FOUND(404, "ACCOUNT-005", "계정을 찾을 수 없는 경우"),
 
     // Jwt
-    ACCESS_TOKEN_NOT_FOUND(403, "JWT-001", "토큰이 존재하지 않는 경우"),
-    ACCESS_TOKEN_EXPIRED(400, "JWT-002", "토큰이 만료되었을 경우");
-
+    ACCESS_TOKEN_NOT_FOUND(403, "JWT-001", "액세스 토큰이 존재하지 않는 경우"),
+    ACCESS_TOKEN_EXPIRED(400, "JWT-002", "액세스 토큰이 만료되었을 경우"),
+    INVALID_ACCESS_TOKEN(401, "JWT-003", "유효하지 않은 액세스 토큰일 경우"),
+    REFRESH_TOKEN_NOT_FOUND(403, "JWT-004", "리프레시 토큰이 존재하지 않는 경우"),
+    REFRESH_TOKEN_EXPIRED(400, "JWT-005", "리프레시 토큰이 만료되었을 경우"),
+    INVALID_REFRESH_TOKEN(401, "JWT-006", "유효하지 않은 리프레시 토큰일 경우");
 
     private final int status;
     private final String code;

@@ -1,6 +1,5 @@
 package hello.practice.domain.user.dto.request;
 
-import hello.practice.domain.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,28 +8,28 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final User user;
+    private final UserDto userDto;
 
-    public CustomUserDetails(User user) {
-        this.user = user;
+    public CustomUserDetails(UserDto userDto) {
+        this.userDto = userDto;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add((GrantedAuthority) () -> user.getRole().getKey());
+        authorities.add((GrantedAuthority) () -> userDto.getRole().getKey());
 
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return userDto.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return userDto.getUsername();
     }
 
     @Override

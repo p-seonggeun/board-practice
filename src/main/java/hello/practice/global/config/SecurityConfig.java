@@ -1,6 +1,7 @@
 package hello.practice.global.config;
 
 import hello.practice.global.auth.LoginFilter;
+import hello.practice.global.jwt.JwtFilter;
 import hello.practice.global.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,9 @@ public class SecurityConfig {
 
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
         loginFilter.setFilterProcessesUrl("/signin");
+
+        httpSecurity
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
 
         httpSecurity
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);

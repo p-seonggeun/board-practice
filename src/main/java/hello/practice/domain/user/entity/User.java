@@ -1,6 +1,7 @@
 package hello.practice.domain.user.entity;
 
 import hello.practice.domain.common.BaseTimeEntity;
+import hello.practice.domain.user.dto.request.UserDto;
 import hello.practice.domain.user.dto.response.UserSignUpResponseDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -41,6 +42,10 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.email = email;
         this.role = role;
+    }
+
+    public UserDto toUserDto() {
+        return new UserDto(username, password, role);
     }
 
     public UserSignUpResponseDto toSignUpResponseDto() {

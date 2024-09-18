@@ -12,7 +12,11 @@ public enum ErrorCode {
     ALREADY_EXISTS_EMAIL(400, "ACCOUNT-002", "이미 존재하는 이메일일 경우"),
     ALREADY_EXISTS_NICKNAME(400, "ACCOUNT-003", "이미 존재하는 닉네임일 경우"),
     UNAUTHORIZED(401, "ACCOUNT-004", "인증에 실패한 경우"),
-    ACCOUNT_NOT_FOUND(404, "ACCOUNT-005", "계정을 찾을 수 없는 경우");
+    ACCOUNT_NOT_FOUND(404, "ACCOUNT-005", "계정을 찾을 수 없는 경우"),
+
+    // Jwt
+    ACCESS_TOKEN_NOT_FOUND(403, "JWT-001", "토큰이 존재하지 않는 경우"),
+    ACCESS_TOKEN_EXPIRED(400, "JWT-002", "토큰이 만료되었을 경우");
 
 
     private final int status;

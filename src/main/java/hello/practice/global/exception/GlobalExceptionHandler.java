@@ -23,9 +23,6 @@ public class GlobalExceptionHandler {
         StringBuilder builder = new StringBuilder();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             builder.setLength(0);
-            builder.append("[");
-            builder.append(fieldError.getField());
-            builder.append("](은)는 ");
             builder.append(fieldError.getDefaultMessage());
             builder.append(".");
             errorMessages.add(builder.toString());

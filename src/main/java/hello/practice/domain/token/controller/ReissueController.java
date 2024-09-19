@@ -67,10 +67,11 @@ public class ReissueController {
         }
 
         String username = jwtUtil.getUsername(refreshToken);
+        String nickname = jwtUtil.getNickname(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
-        String newAccessToken = jwtUtil.createJwt("Access", username, role, ACCESS_TOKEN_EXPIRED_MS);
-        String newRefreshToken = jwtUtil.createJwt("Refresh", username, role, REFRESH_TOKEN_EXPIRED_MS);
+        String newAccessToken = jwtUtil.createJwt("Access", username, nickname, role, ACCESS_TOKEN_EXPIRED_MS);
+        String newRefreshToken = jwtUtil.createJwt("Refresh", username, nickname, role, REFRESH_TOKEN_EXPIRED_MS);
 
         refreshTokenRepository.deleteByRefreshToken(refreshToken);
         log.info("{}의 기존 리프레시 토큰[{}]이 삭제되었습니다.", username, refreshToken);

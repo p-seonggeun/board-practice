@@ -8,7 +8,6 @@ import hello.practice.domain.user.entity.User;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,18 +55,19 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 토큰으로부터 사용자명과 역할 가져오기
-            String username = jwtUtil.getUsername(accessToken);
-            Role role = Role.fromKey(jwtUtil.getRole(accessToken));
-            log.info("{}, {}", username, role);
+        // 토큰으로부터 사용자명과 역할 가져오기
+        String username = jwtUtil.getUsername(accessToken);
+        String nickname = jwtUtil.getNickname(accessToken);
+        Role role = Role.fromKey(jwtUtil.getRole(accessToken));
+        log.info("{}, {}, {}", username, nickname, role);
 
-            // 사용자 정보 설정
-            UserDto userDto = new UserDto(username, "tempPassword", role);
-            CustomUserDetails customUserDetails = new CustomUserDetails(userDto);
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-            log.info("세션에 {}가 등록 되었습니다.", authToken);
+        // 사용자 정보 설정
+        UserDto userDto = new UserDto(username, "tempPassword", nickname, role);
+        CustomUserDetails customUserDetails = new CustomUserDetails(userDto);
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+        log.info("세션에 {}가 등록 되었습니다.", authToken);
 
             filterChain.doFilter(request, response);
         } catch (SignatureException e) {

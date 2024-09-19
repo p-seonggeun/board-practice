@@ -1,8 +1,9 @@
 package hello.practice.domain.board.entity;
 
+import hello.practice.domain.board.dto.request.UpdateBoardRequestDto;
+import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
 import hello.practice.domain.common.BaseEntity;
-import hello.practice.domain.token.entity.RefreshToken;
 import hello.practice.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -43,15 +44,12 @@ public class Board extends BaseEntity {
         hateCount = 0;
     }
 
-    public CreateBoardResponseDto toCreateBoardResponseDto() {
-        return CreateBoardResponseDto
-                        .builder()
-                        .title(title)
-                        .content(content)
-                        .writer(user.getNickname())
-                        .views(views)
-                        .likeCount(likeCount)
-                        .hateCount(hateCount)
-                        .build();
+    public void plusViews() {
+        views++;
+    }
+
+    public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto) {
+        this.title = updateBoardRequestDto.getTitle();
+        this.content = updateBoardRequestDto.getContent();
     }
 }

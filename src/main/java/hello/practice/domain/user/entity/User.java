@@ -44,16 +44,4 @@ public class User extends BaseTimeEntity {
         this.role = role;
     }
 
-    public UserDto toUserDto() {
-        return new UserDto(username, password, role);
-    }
-
-    public UserSignUpResponseDto toSignUpResponseDto() {
-        return UserSignUpResponseDto.builder()
-                .username(username)
-                .nickname(nickname)
-                .email(email)
-                .role(role.getValue())
-                .build();
-    }
 }

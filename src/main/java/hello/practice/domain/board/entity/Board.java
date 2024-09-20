@@ -48,6 +48,22 @@ public class Board extends BaseEntity {
         views++;
     }
 
+    public void plusLikes() {
+        likeCount++;
+    }
+
+    public void minusLikes() {
+        likeCount--;
+    }
+
+    public void plusHates() {
+        hateCount++;
+    }
+
+    public void minusHates() {
+        hateCount--;
+    }
+
     public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto) {
         this.title = updateBoardRequestDto.getTitle();
         this.content = updateBoardRequestDto.getContent();

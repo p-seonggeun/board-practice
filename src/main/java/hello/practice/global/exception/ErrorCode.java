@@ -16,6 +16,7 @@ public enum ErrorCode {
 
     // 게시물
     BOARD_NOT_FOUND(404, "BOARD-001", "게시물을 찾을 수 없는 경우"),
+    BOARD_FORBIDDEN(403, "BOARD-002", "게시물에 대한 권한이 없는 경우"),
 
     // Jwt
     ACCESS_TOKEN_NOT_FOUND(403, "JWT-001", "액세스 토큰이 존재하지 않는 경우"),

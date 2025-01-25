@@ -31,19 +31,19 @@ public class UserService {
         boolean existsByUsername = userRepository.existsByUsername(userSignUpRequestDto.getUsername());
         if (existsByUsername) {
             log.error("이미 존재하는 아이디입니다. {}", userSignUpRequestDto.getUsername());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_USERNAME, "이미 존재하는 아이디입니다.");
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_USERNAME, "이미 존재하는 아이디입니다");
         }
 
         boolean existsByEmail = userRepository.existsByEmail(userSignUpRequestDto.getEmail());
         if (existsByEmail) {
             log.error("이미 존재하는 이메일입니다. {}", userSignUpRequestDto.getEmail());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_EMAIL, "이미 존재하는 이메일입니다.");
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_EMAIL, "이미 존재하는 이메일입니다");
         }
 
         boolean existsByNickname = userRepository.existsByNickname(userSignUpRequestDto.getNickname());
         if (existsByNickname) {
             log.error("이미 존재하는 닉네임입니다. {}", userSignUpRequestDto.getNickname());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_NICKNAME, "이미 존재하는 닉네임입니다.");
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_NICKNAME, "이미 존재하는 닉네임입니다");
         }
 
 
@@ -58,7 +58,7 @@ public class UserService {
 
         userRepository.save(user);
         log.info("회원가입 성공: {}", user);
-        return user.toSignUpResponseDto();
+        return UserConverter.toSignUpResponseDto(user);
     }
 }
 

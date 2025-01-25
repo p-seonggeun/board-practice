@@ -65,21 +65,22 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
+        String nickname = customUserDetails.getNickname();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 
         if (iterator.hasNext()) {
             GrantedAuthority grantedAuthority = iterator.next();
             String role = grantedAuthority.getAuthority();
-            String accessToken = jwtUtil.createJwt("Access", username, role, ACCESS_TOKEN_EXPIRED_MS);
-            String refreshToken = jwtUtil.createJwt("Refresh", username, role, REFRESH_TOKEN_EXPIRED_MS);
+            String accessToken = jwtUtil.createJwt("Access", username, nickname, role, ACCESS_TOKEN_EXPIRED_MS);
+            String refreshToken = jwtUtil.createJwt("Refresh", username, nickname, role, REFRESH_TOKEN_EXPIRED_MS);
 
             saveRefreshToken(username, refreshToken, REFRESH_TOKEN_EXPIRED_MS);
 
             response.setHeader("Authorization", "Bearer " + accessToken);
             response.addCookie(createCookie("RefreshToken", refreshToken));
             response.setStatus(HttpStatus.OK.value());
-            log.info("로그인 성공: {}", username);
+            log.info("로그인 성공: Id: {}, Nickname: {}", username, nickname);
             log.info("액세스 토큰 발급: {}", accessToken);
             log.info("리프레시 토큰 발급: {}", refreshToken);
         }

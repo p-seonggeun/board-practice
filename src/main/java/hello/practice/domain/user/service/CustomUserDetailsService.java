@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "계정을 찾을 수 없습니다"));
-        UserDto userDto = user.toUserDto();
+        UserDto userDto = UserConverter.toUserDto(user);
         return new CustomUserDetails(userDto);
     }
 }

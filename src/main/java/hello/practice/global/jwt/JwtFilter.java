@@ -80,7 +80,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // 특정 경로를 제외시킴
         String path = request.getRequestURI();
-        return path.equals("/signin") || path.equals("/signup") || path.equals("/") || path.equals("/reissue");
+        return path.equals("/signin") || path.equals("/signup") || path.equals("/") || path.equals("/reissue") || path.startsWith("/swagger-ui") || path.startsWith("/v3");
     }
 
     private void handleErrorResponse(HttpServletResponse response, ErrorCode errorCode, String message) throws IOException {

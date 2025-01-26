@@ -28,48 +28,27 @@ public class BoardController {
 
     @PostMapping("/boards")
     public ResponseEntity<CreateBoardResponseDto> createBoard(@Valid @RequestBody CreateBoardRequestDto createBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
         CreateBoardResponseDto createBoardResponseDto = boardCommandService.createBoard(createBoardRequestDto, customUserDetails);
-
         return ResponseEntity.ok(createBoardResponseDto);
     }
 
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardDto>> getAllBoard(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
+    public ResponseEntity<List<BoardDto>> getAllBoard() {
         List<BoardDto> boardDtos = boardQueryService.findAll();
 
         return ResponseEntity.ok(boardDtos);
     }
 
     @GetMapping("/boards/{id}")
-    public ResponseEntity<BoardDto> getBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
+    public ResponseEntity<BoardDto> getBoardById(@PathVariable("id") Long boardId) {
         boardCommandService.increaseBoardViewsById(boardId);
-
         BoardDto boardDto = boardQueryService.findBoardById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }
 
     @PatchMapping("/boards/{id}")
-    public ResponseEntity<BoardDto> updateBoardById(@PathVariable("id") Long boardId, @Valid @RequestBody UpdateBoardRequestDto updateBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
-        if (!boardQueryService.findBoardById(boardId).getWriter().equals(customUserDetails.getNickname())) {
-            throw new BusinessException(ErrorCode.BOARD_FORBIDDEN, "게시물에 권한이 없습니다");
-        }
+    public ResponseEntity<BoardDto> updateBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody UpdateBoardRequestDto updateBoardRequestDto) {
         BoardDto boardDto = boardCommandService.updateBoardById(boardId, updateBoardRequestDto);
 
         return ResponseEntity.ok(boardDto);
@@ -77,13 +56,6 @@ public class BoardController {
 
     @DeleteMapping("/boards/{id}")
     public ResponseEntity<String> deleteBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
-        if (!boardQueryService.findBoardById(boardId).getWriter().equals(customUserDetails.getNickname())) {
-            throw new BusinessException(ErrorCode.BOARD_FORBIDDEN, "게시물에 권한이 없습니다");
-        }
         boardCommandService.deleteBoardById(boardId);
 
         return ResponseEntity.ok("게시물 삭제 완료");
@@ -91,10 +63,6 @@ public class BoardController {
 
     @PostMapping("/boards/{id}/like")
     public ResponseEntity<BoardDto> likeBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
         boardCommandService.toggleLike(boardId, customUserDetails);
         BoardDto boardDto = boardQueryService.findBoardById(boardId);
 
@@ -103,10 +71,6 @@ public class BoardController {
 
     @PostMapping("/boards/{id}/hate")
     public ResponseEntity<BoardDto> hateBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (customUserDetails == null) {
-            log.error("인증되지 않은 사용자입니다.");
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
-        }
         boardCommandService.toggleHate(boardId, customUserDetails);
         BoardDto boardDto = boardQueryService.findBoardById(boardId);
 

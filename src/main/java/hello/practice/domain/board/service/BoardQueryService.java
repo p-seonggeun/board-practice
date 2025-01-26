@@ -21,7 +21,7 @@ public class BoardQueryService {
     private final BoardRepository boardRepository;
 
     public BoardDto findBoardById(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
+        Board board = boardRepository.findBoardByIdWithUser(boardId).orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
         log.info("게시물 조회 완료: {}", board);
 
         return BoardConverter.toBoardDto(board);

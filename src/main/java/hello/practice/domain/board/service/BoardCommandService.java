@@ -45,7 +45,7 @@ public class BoardCommandService {
     }
 
     public BoardDto updateBoardById(Long boardId, UpdateBoardRequestDto updateBoardRequestDto) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> {
+        Board board = boardRepository.findBoardByIdWithUser(boardId).orElseThrow(() -> {
             log.error("게시물을 찾을 수 없습니다.");
             return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
         });
@@ -67,7 +67,7 @@ public class BoardCommandService {
     }
 
     public void increaseBoardViewsById(Long boardId) {
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findBoardByIdWithUser(boardId)
                 .orElseThrow(() -> {
                     log.error("게시물을 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
@@ -79,7 +79,7 @@ public class BoardCommandService {
 
     public void toggleLike(Long boardId, CustomUserDetails customUserDetails) {
         // 게시물 찾기
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findBoardByIdWithUser(boardId)
                 .orElseThrow(() -> {
                     log.error("게시물을 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
@@ -120,7 +120,7 @@ public class BoardCommandService {
     }
 
     public void toggleHate(Long boardId, CustomUserDetails customUserDetails) {
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findBoardByIdWithUser(boardId)
                 .orElseThrow(() -> {
                     log.error("게시물을 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");

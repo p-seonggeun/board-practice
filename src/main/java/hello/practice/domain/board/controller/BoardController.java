@@ -55,6 +55,7 @@ public class BoardController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다");
         }
         boardCommandService.increaseBoardViewsById(boardId);
+
         BoardDto boardDto = boardQueryService.findBoardById(boardId);
 
         return ResponseEntity.ok(boardDto);

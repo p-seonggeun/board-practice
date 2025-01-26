@@ -73,32 +73,37 @@ public class BoardCommandService {
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
                 });
 
-        board.plusViews();
+        boardRepository.incrementViews(boardId);
         log.info("게시물 조회수 증가 완료: {}", board.getViews());
     }
 
     public void toggleLike(Long boardId, CustomUserDetails customUserDetails) {
+        // 게시물 찾기
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> {
                     log.error("게시물을 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
                 });
+
+        // 유저 찾기
         User user = userRepository.findByUsername(customUserDetails.getUsername())
                 .orElseThrow(() -> {
                     log.error("사용자를 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "사용자를 찾을 수 없습니다");
                 });
+
+        // 좋아요 기록 찾기
         boardReactionRepository.findByBoardAndUser(board, user)
                 .ifPresentOrElse(
                         boardReaction -> {
                             if (boardReaction.getReactionType() == ReactionType.LIKE) {
-                                board.minusLikes();
+                                boardRepository.minusLikes(boardId);
                                 boardReactionRepository.delete(boardReaction);
                                 log.info("{}의 {} 좋아요 삭제 완료", user.getNickname(), board.getTitle());
 
                             } else {
-                                board.plusLikes();
-                                board.minusHates();
+                                boardRepository.plusLikes(boardId);
+                                boardRepository.minusHates(boardId);
                                 boardReaction.changeReactionType(ReactionType.LIKE);
                                 log.info("{}의 {} 싫어요 -> 좋아요 변경 완료", user.getNickname(), board.getTitle());
 
@@ -106,7 +111,7 @@ public class BoardCommandService {
                         },
                         () -> {
                             BoardReaction boardReaction = new BoardReaction(board, user, ReactionType.LIKE);
-                            board.plusLikes();
+                            boardRepository.plusLikes(boardId);
                             boardReactionRepository.save(boardReaction);
                             log.info("{}의 {} 좋아요 저장 완료", user.getNickname(), board.getTitle());
                         }
@@ -129,19 +134,19 @@ public class BoardCommandService {
                 .ifPresentOrElse(
                         boardReaction -> {
                             if (boardReaction.getReactionType() == ReactionType.HATE) {
-                                board.minusHates();
+                                boardRepository.minusHates(boardId);
                                 boardReactionRepository.delete(boardReaction);
                                 log.info("{}의 {} 싫어요 삭제 완료", user.getNickname(), board.getTitle());
                             } else {
-                                board.plusHates();
-                                board.minusLikes();
+                                boardRepository.plusHates(boardId);
+                                boardRepository.minusLikes(boardId);
                                 boardReaction.changeReactionType(ReactionType.HATE);
                                 log.info("{}의 {} 좋아요 -> 싫어요 변경 완료", user.getNickname(), board.getTitle());
                             }
                         },
                         () -> {
                             BoardReaction boardReaction = new BoardReaction(board, user, ReactionType.HATE);
-                            board.plusHates();
+                            boardRepository.plusHates(boardId);
                             boardReactionRepository.save(boardReaction);
                             log.info("{}의 {} 싫어요 저장 완료", user.getNickname(), board.getTitle());
                         }

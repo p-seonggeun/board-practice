@@ -20,6 +20,11 @@ spring:
         default_batch_fetch_size: 100
     open-in-view: false
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 logging:
   level:
     org.hibernate.SQL: debug

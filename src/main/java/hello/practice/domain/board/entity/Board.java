@@ -11,6 +11,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.FetchType.*;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,9 +37,12 @@ public class Board extends BaseEntity {
     private int likeCount;
     private int hateCount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "users_id")
     private User user;
+
+    @OneToMany(mappedBy = "board", cascade = REMOVE, orphanRemoval = true)
+    private List<BoardReaction> boardReactions = new ArrayList<>();
 
     public Board(String title, String content, User user) {
         this.title = title;
@@ -47,5 +56,16 @@ public class Board extends BaseEntity {
     public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto) {
         this.title = updateBoardRequestDto.getTitle();
         this.content = updateBoardRequestDto.getContent();
+    }
+
+    // 연관관계 편의 메서드
+    public void addReaction(BoardReaction boardReaction) {
+        this.boardReactions.add(boardReaction);
+        boardReaction.setBoard(this);
+    }
+
+    public void subtractReaction(BoardReaction boardReaction) {
+        this.boardReactions.remove(boardReaction);
+        boardReaction.setBoard(null);
     }
 }

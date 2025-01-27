@@ -14,6 +14,7 @@ import hello.practice.domain.user.entity.User;
 import hello.practice.domain.user.repository.UserRepository;
 import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

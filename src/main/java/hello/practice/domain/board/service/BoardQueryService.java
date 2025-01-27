@@ -1,5 +1,6 @@
 package hello.practice.domain.board.service;
 
+import hello.practice.domain.board.dto.request.BoardSearchCondition;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.entity.Board;
 import hello.practice.domain.board.repository.BoardRepository;
@@ -7,6 +8,8 @@ import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,5 +36,11 @@ public class BoardQueryService {
         return boards.stream()
                 .map(board -> BoardConverter.toBoardDto(board))
                 .toList();
+    }
+
+    public Page<BoardDto> findBoardsWithCondition(BoardSearchCondition condition, Pageable pageable) {
+        Page<BoardDto> searched = boardRepository.searchBoardsWithPagingAndFilters(condition, pageable);
+        log.info("게시물 검색 조회 완료: {}", searched);
+        return searched;
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
 
     @Override
     List<Board> findAll();
@@ -21,23 +21,28 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     void deleteById(Long id);
 
-    @Modifying(clearAutomatically = true)
+//    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Board b SET b.views = b.views + 1 WHERE b.id = :boardId")
     void incrementViews(@Param("boardId") Long boardId);
 
-    @Modifying(clearAutomatically = true)
+//    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Board b SET b.likeCount = b.likeCount + 1 WHERE b.id = :boardId")
     void plusLikes(@Param("boardId") Long boardId);
 
-    @Modifying(clearAutomatically = true)
+//    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Board b SET b.likeCount = b.likeCount - 1 WHERE b.id = :boardId")
     void minusLikes(@Param("boardId") Long boardId);
 
-    @Modifying(clearAutomatically = true)
+//    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Board b SET b.hateCount = b.hateCount + 1 WHERE b.id = :boardId")
     void plusHates(@Param("boardId") Long boardId);
 
-    @Modifying(clearAutomatically = true)
+//    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("UPDATE Board b SET b.hateCount = b.hateCount - 1 WHERE b.id = :boardId")
     void minusHates(@Param("boardId") Long boardId);
 }

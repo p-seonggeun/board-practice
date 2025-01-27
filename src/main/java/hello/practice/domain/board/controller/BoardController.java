@@ -8,8 +8,6 @@ import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
 import hello.practice.domain.board.service.BoardCommandService;
 import hello.practice.domain.board.service.BoardQueryService;
 import hello.practice.domain.user.dto.request.CustomUserDetails;
-import hello.practice.global.exception.BusinessException;
-import hello.practice.global.exception.ErrorCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +34,8 @@ public class BoardController {
 
 //    // 전체 게시물 조회 기능
 //    @GetMapping("/boards")
-//    public ResponseEntity<List<BoardDto>> getAllBoard() {
-//        List<BoardDto> boardDtos = boardQueryService.findAll();
+//    public ResponseEntity<Page<BoardDto>> getAllBoard(Pageable pageable) {
+//        Page<BoardDto> boardDtos = boardQueryService.findAllWithPaging(pageable);
 //
 //        return ResponseEntity.ok(boardDtos);
 //    }
@@ -87,7 +83,10 @@ public class BoardController {
         return ResponseEntity.ok(boardDto);
     }
 
-    // 동적쿼리 게시물 검색 기능 + 페이징
+    /**
+     * 동적쿼리 게시물 검색 기능 + 페이징
+     * 정렬 조건이 없다면 기본적으로 createdAt 내림차순
+     */
     @GetMapping("/boards")
     public Page<BoardDto> searchBoards(BoardSearchCondition condition, Pageable pageable) {
         return boardQueryService.findBoardsWithCondition(condition, pageable);

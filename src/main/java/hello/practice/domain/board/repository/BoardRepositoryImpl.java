@@ -1,6 +1,9 @@
 package hello.practice.domain.board.repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hello.practice.domain.board.dto.request.BoardSearchCondition;
@@ -11,9 +14,11 @@ import hello.practice.domain.user.entity.QUser;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static hello.practice.domain.board.entity.QBoard.*;
@@ -44,6 +49,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                         contentLike(condition.getContent()),
                         writerEq(condition.getWriter())
                 )
+                .orderBy(getSortOrder(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -66,10 +72,28 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
     }
 
     private BooleanExpression contentLike(String content) {
-        return StringUtils.hasText(content) ? board.content.like(content) : null;
+        return StringUtils.hasText(content) ? board.content.like("%" + content + "%") : null;
     }
 
     private BooleanExpression writerEq(String writer) {
         return StringUtils.hasText(writer) ? user.nickname.eq(writer) : null;
+    }
+
+    private OrderSpecifier<?>[] getSortOrder(Pageable pageable) {
+        if (pageable.getSort().isUnsorted()) {
+            return new OrderSpecifier[]{board.createdAt.desc()}; // 기본 정렬 조건
+        }
+
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+        pageable.getSort().forEach(order -> {
+            PathBuilder pathBuilder = new PathBuilder(board.getType(), board.getMetadata());
+            OrderSpecifier<?> orderSpecifier = new OrderSpecifier<>(
+                    order.isAscending() ? Order.ASC : Order.DESC,
+                    pathBuilder.get(order.getProperty())
+            );
+            orders.add(orderSpecifier);
+        });
+
+        return orders.toArray(new OrderSpecifier[0]);
     }
 }

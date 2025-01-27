@@ -9,11 +9,11 @@ import hello.practice.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -30,12 +30,20 @@ public class BoardQueryService {
         return BoardConverter.toBoardDto(board);
     }
 
-    public List<BoardDto> findAll() {
-        List<Board> boards = boardRepository.findAll();
+    // 사용 안하고 있음
+    public Page<BoardDto> findAllWithPaging(Pageable pageable) {
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Order.desc("createdAt")));
+        }
+
+        Page<Board> boards = boardRepository.findAll(pageable);
         log.info("게시물 전체 조회 완료: {}", boards);
-        return boards.stream()
-                .map(board -> BoardConverter.toBoardDto(board))
-                .toList();
+
+        return boards
+                .map(BoardConverter::toBoardDto);
     }
 
     public Page<BoardDto> findBoardsWithCondition(BoardSearchCondition condition, Pageable pageable) {

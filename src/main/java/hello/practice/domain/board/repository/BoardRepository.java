@@ -1,6 +1,8 @@
 package hello.practice.domain.board.repository;
 
 import hello.practice.domain.board.entity.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,8 +14,10 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
 
     @Override
-    List<Board> findAll();
+    Page<Board> findAll(Pageable pageable);
+
     List<Board> findByTitle(String title);
+
     List<Board> findByContent(String content);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.id = :id")

@@ -5,6 +5,7 @@ import hello.practice.domain.token.repository.RefreshTokenRepository;
 import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.jwt.JwtUtil;
+import hello.practice.global.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +28,8 @@ import static hello.practice.domain.common.Constants.*;
 public class ReissueController {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -43,6 +45,11 @@ public class ReissueController {
             }
         }
 
+        String category = jwtUtil.getCategory(refreshToken);
+        String username = jwtUtil.getUsername(refreshToken);
+        String nickname = jwtUtil.getNickname(refreshToken);
+        String role = jwtUtil.getRole(refreshToken);
+
         if (refreshToken == null) {
             log.error("리프레시 토큰을 찾을 수 없습니다.");
             throw new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다");
@@ -55,27 +62,26 @@ public class ReissueController {
             throw new BusinessException(ErrorCode.REFRESH_TOKEN_EXPIRED, "리프레시 토큰이 만료되었습니다");
         }
 
-        String category = jwtUtil.getCategory(refreshToken);
         if (!category.equals("Refresh")) {
             log.error("유효하지 않은 리프레시 토큰입니다.");
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 리프레시 토큰입니다");
         }
 
-        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+//        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+        boolean isExist = redisService.existRefreshToken(username);
         if(!isExist) {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 리프레시 토큰입니다");
         }
 
-        String username = jwtUtil.getUsername(refreshToken);
-        String nickname = jwtUtil.getNickname(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
 
         String newAccessToken = jwtUtil.createJwt("Access", username, nickname, role, ACCESS_TOKEN_EXPIRED_MS);
         String newRefreshToken = jwtUtil.createJwt("Refresh", username, nickname, role, REFRESH_TOKEN_EXPIRED_MS);
 
-        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+//        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+        redisService.deleteRefreshToken(username);
         log.info("{}의 기존 리프레시 토큰[{}]이 삭제되었습니다.", username, refreshToken);
-        saveRefreshToken(username, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS);
+        redisService.saveRefreshToken(username, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS);
+//        saveRefreshToken(username, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS);
 
         response.setHeader("Authorization", "Bearer " + newAccessToken);
         response.addCookie(createCookie("RefreshToken", newRefreshToken));
@@ -87,13 +93,13 @@ public class ReissueController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void saveRefreshToken(String username, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-        RefreshToken refreshToken = new RefreshToken(username, refresh, date.toString());
-
-        log.info("{}의 리프레시 토큰 저장: {}", username, refreshToken);
-        refreshTokenRepository.save(refreshToken);
-    }
+//    private void saveRefreshToken(String username, String refresh, Long expiredMs) {
+//        Date date = new Date(System.currentTimeMillis() + expiredMs);
+//        RefreshToken refreshToken = new RefreshToken(username, refresh, date.toString());
+//
+//        log.info("{}의 리프레시 토큰 저장: {}", username, refreshToken);
+//        refreshTokenRepository.save(refreshToken);
+//    }
 
     private Cookie createCookie(String cookieName, String value) {
         Cookie cookie = new Cookie(cookieName, value);

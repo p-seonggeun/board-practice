@@ -8,6 +8,7 @@ import hello.practice.domain.user.dto.request.UserLoginDto;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
 import hello.practice.global.jwt.JwtUtil;
+import hello.practice.global.redis.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
@@ -40,7 +41,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -75,7 +77,8 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
             String accessToken = jwtUtil.createJwt("Access", username, nickname, role, ACCESS_TOKEN_EXPIRED_MS);
             String refreshToken = jwtUtil.createJwt("Refresh", username, nickname, role, REFRESH_TOKEN_EXPIRED_MS);
 
-            saveRefreshToken(username, refreshToken, REFRESH_TOKEN_EXPIRED_MS);
+//            saveRefreshToken(username, refreshToken, REFRESH_TOKEN_EXPIRED_MS);
+            redisService.saveRefreshToken(username, refreshToken, REFRESH_TOKEN_EXPIRED_MS);
 
             response.setHeader("Authorization", "Bearer " + accessToken);
             response.addCookie(createCookie("RefreshToken", refreshToken));
@@ -100,13 +103,13 @@ public class CustomLoginFilter extends UsernamePasswordAuthenticationFilter {
 //        throw new BusinessException(ErrorCode.UNAUTHORIZED, "아이디 또는 비밀번호가 일치하지 않습니다.");
     }
 
-    private void saveRefreshToken(String username, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
-        RefreshToken refreshToken = new RefreshToken(username, refresh, date.toString());
-
-        log.info("{}의 리프레시 토큰 저장: {}", username, refreshToken);
-        refreshTokenRepository.save(refreshToken);
-    }
+//    private void saveRefreshToken(String username, String refresh, Long expiredMs) {
+//        Date date = new Date(System.currentTimeMillis() + expiredMs);
+//        RefreshToken refreshToken = new RefreshToken(username, refresh, date.toString());
+//
+//        log.info("{}의 리프레시 토큰 저장: {}", username, refreshToken);
+//        refreshTokenRepository.save(refreshToken);
+//    }
 
     private Cookie createCookie(String cookieName, String value) {
         Cookie cookie = new Cookie(cookieName, value);

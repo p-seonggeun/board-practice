@@ -1,27 +1,36 @@
 package hello.practice.global.redis;
 
-import hello.practice.global.redis.dto.RedisSaveRequestDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void save(RedisSaveRequestDto redisSaveRequestDto) {
-        redisTemplate.opsForValue().set(redisSaveRequestDto.getKey(), redisSaveRequestDto.getValue(), Duration.ofSeconds(redisSaveRequestDto.getTimeout()));
+    public void saveRefreshToken(String username, String refreshToken, Long timeout) {
+        redisTemplate.opsForValue().set(username, refreshToken, timeout);
+        log.info("{}의 리프레시 토큰 저장", username);
     }
 
-    public String get(String key) {
-        return (String) redisTemplate.opsForValue().get(key);
+    public String getRefreshToken(String username) {
+        String result = (String) redisTemplate.opsForValue().get(username);
+        log.info("{}의 리프레시 토큰: {}", username, result);
+        return result;
     }
 
-    public void delete(String key) {
-        redisTemplate.delete(key);
+    public void deleteRefreshToken(String username) {
+        Boolean result = redisTemplate.delete(username);
+        log.info("{}의 리프레시 토큰 삭제 결과: {}", username, result);
+    }
+
+    public boolean existRefreshToken(String username) {
+        Boolean result = redisTemplate.hasKey(username);
+        log.info("{}의 리프레시 토큰 존재 확인 결과: {}", username, result);
+        return result;
     }
 }

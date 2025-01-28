@@ -44,6 +44,8 @@ public class ReissueController {
                 break;
             }
         }
+        String accessToken = request.getHeader("Authorization").split(" ")[1];
+        Long remainingTtl = jwtUtil.getRemainingTtl(accessToken);
 
         String category = jwtUtil.getCategory(refreshToken);
         String username = jwtUtil.getUsername(refreshToken);
@@ -78,7 +80,9 @@ public class ReissueController {
         String newRefreshToken = jwtUtil.createJwt("Refresh", username, nickname, role, REFRESH_TOKEN_EXPIRED_MS);
 
 //        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+        redisService.addToBlacklist(accessToken, remainingTtl);
         redisService.deleteRefreshToken(username);
+        log.info("{}의 기존 액세스 토큰[{}]이 블랙리스트에 추가되었습니다.", username, accessToken);
         log.info("{}의 기존 리프레시 토큰[{}]이 삭제되었습니다.", username, refreshToken);
         redisService.saveRefreshToken(username, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS);
 //        saveRefreshToken(username, newRefreshToken, REFRESH_TOKEN_EXPIRED_MS);

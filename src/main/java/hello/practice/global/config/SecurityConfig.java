@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisService), LogoutFilter.class);
 
         httpSecurity
-                .addFilterBefore(new JwtFilter(jwtUtil), CustomLoginFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, redisService), CustomLoginFilter.class);
 
         httpSecurity
                 .addFilterAt(customLoginFilter, UsernamePasswordAuthenticationFilter.class);

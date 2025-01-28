@@ -7,6 +7,7 @@ import hello.practice.domain.user.entity.Role;
 import hello.practice.domain.user.entity.User;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
+import hello.practice.global.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
@@ -28,6 +29,7 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisService redisService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -41,6 +43,11 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             String accessToken = authorization.split(" ")[1];
+
+            if (redisService.isBlacklisted(accessToken)) {
+                handleErrorResponse(response, ErrorCode.INVALID_ACCESS_TOKEN, "유효하지 않은 액세스 토큰입니다.");
+                return;
+            }
 
             // 토큰이 만료되었으면 에러 처리
             try {

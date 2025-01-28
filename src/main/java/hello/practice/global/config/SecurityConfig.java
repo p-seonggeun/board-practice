@@ -5,6 +5,7 @@ import hello.practice.global.auth.CustomLoginFilter;
 import hello.practice.global.auth.CustomLogoutFilter;
 import hello.practice.global.jwt.JwtFilter;
 import hello.practice.global.jwt.JwtUtil;
+import hello.practice.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,8 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -49,11 +51,14 @@ public class SecurityConfig {
         httpSecurity
                 .httpBasic((configurer) -> configurer.disable());
 
-        CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository);
+//        CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository);
+        CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisService);
         customLoginFilter.setFilterProcessesUrl("/signin");
 
+//        httpSecurity
+//                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
         httpSecurity
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisService), LogoutFilter.class);
 
         httpSecurity
                 .addFilterBefore(new JwtFilter(jwtUtil), CustomLoginFilter.class);
@@ -65,6 +70,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((configurer) ->
                         configurer
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+                                .requestMatchers("/redis/**").permitAll()
                                 .requestMatchers("/", "/signin", "/signup", "/reissue", "/signout").permitAll()
                                 .requestMatchers("/user").hasRole("USER")
                                 .requestMatchers("/admin").hasRole("ADMIN")

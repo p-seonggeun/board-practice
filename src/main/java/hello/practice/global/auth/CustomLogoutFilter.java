@@ -5,6 +5,7 @@ import hello.practice.domain.token.repository.RefreshTokenRepository;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
 import hello.practice.global.jwt.JwtUtil;
+import hello.practice.global.redis.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +26,8 @@ import java.util.List;
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
+    private final RedisService redisService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -63,13 +65,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+//        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+        String username = jwtUtil.getUsername(refreshToken);
+        boolean isExist = redisService.existRefreshToken(username);
         if (!isExist) {
             handleErrorResponse(response, ErrorCode.INVALID_REFRESH_TOKEN, "유효하지 않은 리프레시 토큰입니다.", HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+//        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+        redisService.deleteRefreshToken(username);
         clearRefreshTokenCookie(response);
         log.info("로그아웃 완료");
         log.info("리프레시 토큰 삭제: {}", refreshToken);

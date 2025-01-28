@@ -47,6 +47,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         String refreshToken = getRefreshTokenFromCookies(request);
+        String accessToken = getAccessTokenFromHeader(request);
         if (refreshToken == null) {
             handleErrorResponse(response, ErrorCode.REFRESH_TOKEN_NOT_FOUND, "리프레시 토큰이 존재하지 않습니다.", HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -74,9 +75,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
 //        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+        Long remainingTtl = jwtUtil.getRemainingTtl(accessToken);
+        redisService.addToBlacklist(accessToken, remainingTtl);
         redisService.deleteRefreshToken(username);
         clearRefreshTokenCookie(response);
         log.info("로그아웃 완료");
+        log.info("액세스 토큰 블랙리스트 처리: {}, 남은시간: {}", accessToken, remainingTtl);
         log.info("리프레시 토큰 삭제: {}", refreshToken);
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -91,6 +95,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
             }
         }
         return null;
+    }
+
+    private String getAccessTokenFromHeader(HttpServletRequest request) {
+        String authorization = request.getHeader("Authorization");
+        String accessToken = authorization.split(" ")[1];
+        return accessToken;
     }
 
     private void handleErrorResponse(HttpServletResponse response, ErrorCode errorCode, String message, int status) throws IOException {

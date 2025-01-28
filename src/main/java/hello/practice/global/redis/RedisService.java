@@ -39,4 +39,18 @@ public class RedisService {
         log.info("{}의 리프레시 토큰 존재 확인 결과: {}", key, result);
         return result;
     }
+
+    public void addToBlacklist(String accessToken, Long remainingTtl) {
+        String blacklistKey = "blacklist:" + accessToken;
+        redisTemplate.opsForValue().set(blacklistKey, "true", remainingTtl, TimeUnit.MILLISECONDS);
+        log.info("액세스 토큰 블랙리스트 추가: {}", accessToken);
+    }
+
+    public boolean isBlacklisted(String accessToken) {
+        String blacklistKey = "blacklist:" + accessToken;
+        Boolean result = redisTemplate.hasKey(blacklistKey);
+        log.info("{} 블랙리스트 여부: {}", blacklistKey, result);
+        return result != null && result; // null 체크 후 true 여부 반환
+    }
+
 }

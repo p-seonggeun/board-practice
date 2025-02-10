@@ -44,7 +44,7 @@ public class BoardController {
     @GetMapping("/boards/{id}")
     public ResponseEntity<BoardDto> getBoardById(@PathVariable("id") Long boardId) {
         boardCommandService.increaseBoardViewsById(boardId);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }
@@ -69,7 +69,7 @@ public class BoardController {
     @PostMapping("/boards/{id}/like")
     public ResponseEntity<BoardDto> likeBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardCommandService.toggleLike(boardId, customUserDetails);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }
@@ -78,7 +78,7 @@ public class BoardController {
     @PostMapping("/boards/{id}/hate")
     public ResponseEntity<BoardDto> hateBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardCommandService.toggleHate(boardId, customUserDetails);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }

@@ -29,13 +29,13 @@ public class BoardReaction {
     @Enumerated(EnumType.STRING)
     private ReactionType reactionType;
 
-    public void changeReactionType(ReactionType reactionType) {
-        this.reactionType = reactionType;
-    }
-
     public BoardReaction(Board board, User user, ReactionType reactionType) {
         this.board = board;
         this.user = user;
+        this.reactionType = reactionType;
+    }
+
+    public void changeReactionType(ReactionType reactionType) {
         this.reactionType = reactionType;
     }
 }

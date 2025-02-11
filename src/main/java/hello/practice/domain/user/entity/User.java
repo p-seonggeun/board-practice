@@ -1,8 +1,6 @@
 package hello.practice.domain.user.entity;
 
 import hello.practice.domain.common.BaseTimeEntity;
-import hello.practice.domain.user.dto.request.UserDto;
-import hello.practice.domain.user.dto.response.UserSignUpResponseDto;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

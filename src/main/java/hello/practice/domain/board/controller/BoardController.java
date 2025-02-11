@@ -26,20 +26,14 @@ public class BoardController {
     private final BoardCommandService boardCommandService;
     private final BoardQueryService boardQueryService;
 
-    // 게시물 생성 기능
-    @PostMapping("/boards")
-    public ResponseEntity<CreateBoardResponseDto> createBoard(@Valid @RequestBody CreateBoardRequestDto createBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        CreateBoardResponseDto createBoardResponseDto = boardCommandService.createBoard(createBoardRequestDto, customUserDetails);
-        return ResponseEntity.ok(createBoardResponseDto);
+    /**
+     * 동적쿼리 게시물 검색 기능 + 페이징
+     * 정렬 조건이 없다면 기본적으로 createdAt 내림차순
+     */
+    @GetMapping("/boards")
+    public Page<BoardDto> searchBoards(BoardSearchCondition condition, Pageable pageable) {
+        return boardQueryService.findBoardsWithCondition(condition, pageable);
     }
-
-//    // 전체 게시물 조회 기능
-//    @GetMapping("/boards")
-//    public ResponseEntity<Page<BoardDto>> getAllBoard(Pageable pageable) {
-//        Page<BoardDto> boardDtos = boardQueryService.findAllWithPaging(pageable);
-//
-//        return ResponseEntity.ok(boardDtos);
-//    }
 
     // 게시물 상세 조회 기능
     @GetMapping("/boards/{id}")
@@ -48,6 +42,13 @@ public class BoardController {
         BoardDetailDto boardDetailDto = boardQueryService.findBoardDetailDtoById(boardId);
 
         return ResponseEntity.ok(boardDetailDto);
+    }
+
+    // 게시물 생성 기능
+    @PostMapping("/boards")
+    public ResponseEntity<CreateBoardResponseDto> createBoard(@Valid @RequestBody CreateBoardRequestDto createBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        CreateBoardResponseDto createBoardResponseDto = boardCommandService.createBoard(createBoardRequestDto, customUserDetails);
+        return ResponseEntity.ok(createBoardResponseDto);
     }
 
     // 게시물 수정 기능
@@ -82,14 +83,5 @@ public class BoardController {
         BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
-    }
-
-    /**
-     * 동적쿼리 게시물 검색 기능 + 페이징
-     * 정렬 조건이 없다면 기본적으로 createdAt 내림차순
-     */
-    @GetMapping("/boards")
-    public Page<BoardDto> searchBoards(BoardSearchCondition condition, Pageable pageable) {
-        return boardQueryService.findBoardsWithCondition(condition, pageable);
     }
 }

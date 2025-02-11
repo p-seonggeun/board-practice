@@ -1,8 +1,6 @@
 package hello.practice.domain.board.entity;
 
 import hello.practice.domain.board.dto.request.UpdateBoardRequestDto;
-import hello.practice.domain.board.dto.response.BoardDto;
-import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
 import hello.practice.domain.comment.entity.Comment;
 import hello.practice.domain.common.BaseEntity;
 import hello.practice.domain.user.entity.User;
@@ -60,16 +58,5 @@ public class Board extends BaseEntity {
     public void updateBoard(UpdateBoardRequestDto updateBoardRequestDto) {
         this.title = updateBoardRequestDto.getTitle();
         this.content = updateBoardRequestDto.getContent();
-    }
-
-    // 연관관계 편의 메서드
-    public void addReaction(BoardReaction boardReaction) {
-        this.boardReactions.add(boardReaction);
-        boardReaction.setBoard(this);
-    }
-
-    public void subtractReaction(BoardReaction boardReaction) {
-        this.boardReactions.remove(boardReaction);
-        boardReaction.setBoard(null);
     }
 }

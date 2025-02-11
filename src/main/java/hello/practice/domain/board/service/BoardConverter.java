@@ -35,12 +35,7 @@ public class BoardConverter {
                 .build();
     }
 
-    public static BoardDetailDto toBoardDetailDtoFrom(Board board) {
-        List<Comment> comments = board.getComments();
-        List<CommentDto> commentDtos = comments.stream()
-                .map(comment -> CommentConverter.toCommentDtoFrom(comment))
-                .toList();
-
+    public static BoardDetailDto toBoardDetailDtoFrom(Board board, List<CommentDto> commentDtos) {
         return BoardDetailDto.builder()
                 .title(board.getTitle())
                 .content(board.getContent())

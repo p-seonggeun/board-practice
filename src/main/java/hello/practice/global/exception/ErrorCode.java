@@ -18,13 +18,17 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(404, "BOARD-001", "게시물을 찾을 수 없는 경우"),
     BOARD_FORBIDDEN(403, "BOARD-002", "게시물에 대한 권한이 없는 경우"),
 
+
     // Jwt
     ACCESS_TOKEN_NOT_FOUND(403, "JWT-001", "액세스 토큰이 존재하지 않는 경우"),
     ACCESS_TOKEN_EXPIRED(400, "JWT-002", "액세스 토큰이 만료되었을 경우"),
     INVALID_ACCESS_TOKEN(401, "JWT-003", "유효하지 않은 액세스 토큰일 경우"),
     REFRESH_TOKEN_NOT_FOUND(403, "JWT-004", "리프레시 토큰이 존재하지 않는 경우"),
     REFRESH_TOKEN_EXPIRED(400, "JWT-005", "리프레시 토큰이 만료되었을 경우"),
-    INVALID_REFRESH_TOKEN(401, "JWT-006", "유효하지 않은 리프레시 토큰일 경우");
+    INVALID_REFRESH_TOKEN(401, "JWT-006", "유효하지 않은 리프레시 토큰일 경우"),
+
+    // 댓글
+    COMMENT_NOT_FOUND(404, "COMMENT-001", "댓글을 찾을 수 없는 경우");
 
     private final int status;
     private final String code;

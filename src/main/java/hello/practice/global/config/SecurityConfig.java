@@ -1,6 +1,5 @@
 package hello.practice.global.config;
 
-import hello.practice.domain.token.repository.RefreshTokenRepository;
 import hello.practice.global.auth.CustomLoginFilter;
 import hello.practice.global.auth.CustomLogoutFilter;
 import hello.practice.global.jwt.JwtFilter;
@@ -26,7 +25,6 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
-//    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
 
     @Bean
@@ -51,12 +49,9 @@ public class SecurityConfig {
         httpSecurity
                 .httpBasic((configurer) -> configurer.disable());
 
-//        CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenRepository);
         CustomLoginFilter customLoginFilter = new CustomLoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisService);
         customLoginFilter.setFilterProcessesUrl("/signin");
 
-//        httpSecurity
-//                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
         httpSecurity
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, redisService), LogoutFilter.class);
 

@@ -64,18 +64,39 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchOne());
     }
 
+    /**
+     * 게시물 제목이 일치하는가
+     * @param title
+     * @return
+     */
     private BooleanExpression titleEq(String title) {
         return StringUtils.hasText(title) ? board.title.eq(title) : null;
     }
 
+    /**
+     * 게시물 내용을 포함하는가
+     * @param content
+     * @return
+     */
     private BooleanExpression contentLike(String content) {
         return StringUtils.hasText(content) ? board.content.like("%" + content + "%") : null;
     }
 
+    /**
+     * 작성자가 일치하는가
+     * @param writer
+     * @return
+     */
     private BooleanExpression writerEq(String writer) {
         return StringUtils.hasText(writer) ? user.nickname.eq(writer) : null;
     }
 
+    /**
+     * 정렬 조건
+     * 기본정렬: createdAt 내림차순
+     * @param pageable
+     * @return
+     */
     private OrderSpecifier<?>[] getSortOrder(Pageable pageable) {
         if (pageable.getSort().isUnsorted()) {
             return new OrderSpecifier[]{board.createdAt.desc()}; // 기본 정렬 조건

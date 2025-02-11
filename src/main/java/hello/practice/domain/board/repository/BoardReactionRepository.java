@@ -11,6 +11,12 @@ import java.util.Optional;
 
 public interface BoardReactionRepository extends JpaRepository<BoardReaction, Long> {
 
+    /**
+     * 유저 id, 게시물 id로 reaction 찾기
+     * @param board
+     * @param user
+     * @return
+     */
     @Query("SELECT br FROM BoardReaction br " +
             "JOIN FETCH br.user " +
             "JOIN FETCH br.board " +

@@ -5,6 +5,8 @@ import hello.practice.domain.board.dto.response.BoardDetailDto;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.entity.Board;
 import hello.practice.domain.board.repository.BoardRepository;
+import hello.practice.domain.comment.dto.response.CommentDto;
+import hello.practice.domain.comment.service.CommentQueryService;
 import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardQueryService {
 
     private final BoardRepository boardRepository;
+    private final CommentQueryService commentQueryService;
 
     // 게시물 Dto 조회
     public BoardDto findBoardDtoById(Long boardId) {
@@ -33,11 +38,13 @@ public class BoardQueryService {
 
     // 게시물 상세 Dto 조회(댓글 리스트 포함)
     public BoardDetailDto findBoardDetailDtoById(Long boardId) {
-        Board board = boardRepository.findBoardDetailByIdWithUserAndComments(boardId)
+        Board board = boardRepository.findBoardDetailByIdWithUser(boardId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
         log.info("게시물 상세 조회 완료: {}", board);
 
-        return BoardConverter.toBoardDetailDtoFrom(board);
+        List<CommentDto> commentDtos = commentQueryService.getCommentByBoardId(boardId);
+
+        return BoardConverter.toBoardDetailDtoFrom(board, commentDtos);
     }
 
     // 게시물 엔티티 조회

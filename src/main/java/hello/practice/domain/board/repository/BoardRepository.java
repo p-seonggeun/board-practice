@@ -20,12 +20,12 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
 
     /**
      * 게시물 ID로 상세조회
-     * 유저와 댓글 left 페치 조인
+     * 유저 페치 조인
      * @param boardId
      * @return Optional<Board>
      */
-    @Query("SELECT b FROM Board b JOIN FETCH b.user LEFT JOIN FETCH b.comments WHERE b.id = :boardId")
-    Optional<Board> findBoardDetailByIdWithUserAndComments(Long boardId);
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.id = :boardId")
+    Optional<Board> findBoardDetailByIdWithUser(Long boardId);
 
     /**
      * 특정 게시물 삭제: 나중에 isDeleted 고려해보기

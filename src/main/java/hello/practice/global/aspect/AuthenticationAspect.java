@@ -44,7 +44,7 @@ public class AuthenticationAspect {
             }
         }
         // 권한 검증 로직
-        if (!boardQueryService.findBoardById(boardId).getWriter().equals(customUserDetails.getNickname())) {
+        if (!boardQueryService.findBoardDtoById(boardId).getWriter().equals(customUserDetails.getNickname())) {
             throw new BusinessException(ErrorCode.BOARD_FORBIDDEN, "게시물에 권한이 없습니다");
         }
 

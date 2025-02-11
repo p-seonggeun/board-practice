@@ -11,10 +11,9 @@ import hello.practice.domain.board.repository.BoardReactionRepository;
 import hello.practice.domain.board.repository.BoardRepository;
 import hello.practice.domain.user.dto.request.CustomUserDetails;
 import hello.practice.domain.user.entity.User;
-import hello.practice.domain.user.repository.UserRepository;
+import hello.practice.domain.user.service.UserQueryService;
 import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,20 +28,16 @@ public class BoardCommandService {
 
     private final BoardRepository boardRepository;
     private final BoardReactionRepository boardReactionRepository;
-    private final UserRepository userRepository;
+    private final UserQueryService userQueryService;
 
     public CreateBoardResponseDto createBoard(CreateBoardRequestDto createBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User user = userRepository.findByUsername(customUserDetails.getUsername())
-                .orElseThrow(() -> {
-                    log.error("사용자를 찾을 수 없습니다.");
-                    return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "사용자를 찾을 수 없습니다");
-                });
+        User user = userQueryService.getUserByUsername(customUserDetails.getUsername());
         Board board = new Board(createBoardRequestDto.getTitle(), createBoardRequestDto.getContent(), user);
 
         boardRepository.save(board);
         log.info("게시물 생성 완료: {}", board);
 
-        return BoardConverter.toCreateBoardResponseDto(board, user);
+        return BoardConverter.toCreateBoardResponseDtoFrom(board, user);
     }
 
     public BoardDto updateBoardById(Long boardId, UpdateBoardRequestDto updateBoardRequestDto) {
@@ -53,7 +48,7 @@ public class BoardCommandService {
 
         board.updateBoard(updateBoardRequestDto);
         log.info("게시물 수정 완료: {}", board);
-        BoardDto boardDto = BoardConverter.toBoardDto(board);
+        BoardDto boardDto = BoardConverter.toBoardDtoFrom(board);
         return boardDto;
     }
 
@@ -87,11 +82,7 @@ public class BoardCommandService {
                 });
 
         // 유저 찾기
-        User user = userRepository.findByUsername(customUserDetails.getUsername())
-                .orElseThrow(() -> {
-                    log.error("사용자를 찾을 수 없습니다.");
-                    return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "사용자를 찾을 수 없습니다");
-                });
+        User user = userQueryService.getUserByUsername(customUserDetails.getUsername());
 
         // 좋아요 기록 찾기
         boardReactionRepository.findByBoardAndUser(board, user)
@@ -126,11 +117,8 @@ public class BoardCommandService {
                     log.error("게시물을 찾을 수 없습니다.");
                     return new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다");
                 });
-        User user = userRepository.findByUsername(customUserDetails.getUsername())
-                .orElseThrow(() -> {
-                    log.error("사용자를 찾을 수 없습니다.");
-                    return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "사용자를 찾을 수 없습니다");
-                });
+        User user = userQueryService.getUserByUsername(customUserDetails.getUsername());
+
         boardReactionRepository.findByBoardAndUser(board, user)
                 .ifPresentOrElse(
                         boardReaction -> {

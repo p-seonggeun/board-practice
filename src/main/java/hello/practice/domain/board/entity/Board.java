@@ -3,6 +3,7 @@ package hello.practice.domain.board.entity;
 import hello.practice.domain.board.dto.request.UpdateBoardRequestDto;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
+import hello.practice.domain.comment.entity.Comment;
 import hello.practice.domain.common.BaseEntity;
 import hello.practice.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -43,6 +44,9 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = REMOVE, orphanRemoval = true)
     private List<BoardReaction> boardReactions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board", cascade = REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Board(String title, String content, User user) {
         this.title = title;

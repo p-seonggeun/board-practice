@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class UserService {
+public class UserCommandService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -58,7 +58,7 @@ public class UserService {
 
         userRepository.save(user);
         log.info("회원가입 성공: {}", user);
-        return UserConverter.toSignUpResponseDto(user);
+        return UserConverter.toSignUpResponseDtoFrom(user);
     }
 }
 

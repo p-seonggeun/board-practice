@@ -1,6 +1,7 @@
 package hello.practice.domain.board.service;
 
 import hello.practice.domain.board.dto.request.BoardSearchCondition;
+import hello.practice.domain.board.dto.response.BoardDetailDto;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.entity.Board;
 import hello.practice.domain.board.repository.BoardRepository;
@@ -23,11 +24,41 @@ public class BoardQueryService {
 
     private final BoardRepository boardRepository;
 
-    public BoardDto findBoardById(Long boardId) {
+    /**
+     * 게시물 Dto 조회
+     * @param boardId
+     * @return
+     */
+    public BoardDto findBoardDtoById(Long boardId) {
         Board board = boardRepository.findBoardByIdWithUser(boardId).orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
         log.info("게시물 조회 완료: {}", board);
 
-        return BoardConverter.toBoardDto(board);
+        return BoardConverter.toBoardDtoFrom(board);
+    }
+
+    /**
+     * 게시물 상세 Dto 조회(댓글 리스트 포함)
+     * @param boardId
+     * @return
+     */
+    public BoardDetailDto findBoardDetailDtoById(Long boardId) {
+        Board board = boardRepository.findBoardDetailByIdWithUserAndComments(boardId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
+        log.info("게시물 상세 조회 완료: {}", board);
+
+        return BoardConverter.toBoardDetailDtoFrom(board);
+    }
+
+    /**
+     * 게시물 엔티티 조회
+     * @param boardId
+     * @return
+     */
+    public Board findBoardById(Long boardId) {
+        Board board = boardRepository.findBoardByIdWithUser(boardId).orElseThrow(() -> new BusinessException(ErrorCode.BOARD_NOT_FOUND, "게시물을 찾을 수 없습니다"));
+        log.info("게시물(엔티티) 조회 완료: {}", board);
+
+        return board;
     }
 
     // 사용 안하고 있음
@@ -43,7 +74,7 @@ public class BoardQueryService {
         log.info("게시물 전체 조회 완료: {}", boards);
 
         return boards
-                .map(BoardConverter::toBoardDto);
+                .map(BoardConverter::toBoardDtoFrom);
     }
 
     public Page<BoardDto> findBoardsWithCondition(BoardSearchCondition condition, Pageable pageable) {

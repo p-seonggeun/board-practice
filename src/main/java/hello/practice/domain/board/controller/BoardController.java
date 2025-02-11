@@ -2,6 +2,7 @@ package hello.practice.domain.board.controller;
 
 import hello.practice.domain.board.dto.request.BoardSearchCondition;
 import hello.practice.domain.board.dto.request.UpdateBoardRequestDto;
+import hello.practice.domain.board.dto.response.BoardDetailDto;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.dto.request.CreateBoardRequestDto;
 import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
@@ -42,11 +43,11 @@ public class BoardController {
 
     // 게시물 상세 조회 기능
     @GetMapping("/boards/{id}")
-    public ResponseEntity<BoardDto> getBoardById(@PathVariable("id") Long boardId) {
+    public ResponseEntity<BoardDetailDto> getBoardById(@PathVariable("id") Long boardId) {
         boardCommandService.increaseBoardViewsById(boardId);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDetailDto boardDetailDto = boardQueryService.findBoardDetailDtoById(boardId);
 
-        return ResponseEntity.ok(boardDto);
+        return ResponseEntity.ok(boardDetailDto);
     }
 
     // 게시물 수정 기능
@@ -69,7 +70,7 @@ public class BoardController {
     @PostMapping("/boards/{id}/like")
     public ResponseEntity<BoardDto> likeBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardCommandService.toggleLike(boardId, customUserDetails);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }
@@ -78,7 +79,7 @@ public class BoardController {
     @PostMapping("/boards/{id}/hate")
     public ResponseEntity<BoardDto> hateBoardById(@PathVariable("id") Long boardId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boardCommandService.toggleHate(boardId, customUserDetails);
-        BoardDto boardDto = boardQueryService.findBoardById(boardId);
+        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
 
         return ResponseEntity.ok(boardDto);
     }

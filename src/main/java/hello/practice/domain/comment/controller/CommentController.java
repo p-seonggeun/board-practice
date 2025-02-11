@@ -23,8 +23,8 @@ public class CommentController {
     private final CommentCommandService commentCommandService;
 
     @PostMapping("/comments/{boardId}")
-    public ResponseEntity<CommentDto> createComment(@PathVariable("boardId") Long boardId, @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        CommentDto commentDto = commentCommandService.createComment(boardId, createCommentRequestDto, customUserDetails);
-        return ResponseEntity.ok(commentDto);
+    public ResponseEntity<CreateCommentResponseDto> createComment(@PathVariable("boardId") Long boardId, @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        CreateCommentResponseDto createCommentResponseDto = commentCommandService.createComment(boardId, createCommentRequestDto, customUserDetails);
+        return ResponseEntity.ok(createCommentResponseDto);
     }
 }

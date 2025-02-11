@@ -6,11 +6,11 @@ import hello.practice.domain.user.entity.User;
 
 public class UserConverter {
 
-    public static UserDto toUserDto(User user) {
+    public static UserDto toUserDtoFrom(User user) {
         return new UserDto(user.getUsername(), user.getPassword(), user.getNickname(), user.getRole());
     }
 
-    public static UserSignUpResponseDto toSignUpResponseDto(User user) {
+    public static UserSignUpResponseDto toSignUpResponseDtoFrom(User user) {
         return UserSignUpResponseDto.builder()
                 .username(user.getUsername())
                 .nickname(user.getNickname())

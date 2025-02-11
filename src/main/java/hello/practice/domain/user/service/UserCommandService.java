@@ -58,7 +58,7 @@ public class UserCommandService {
 
         userRepository.save(user);
         log.info("회원가입 성공: {}", user);
-        return UserConverter.toSignUpResponseDto(user);
+        return UserConverter.toSignUpResponseDtoFrom(user);
     }
 }
 

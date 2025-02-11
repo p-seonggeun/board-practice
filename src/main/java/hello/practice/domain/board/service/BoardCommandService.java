@@ -14,7 +14,6 @@ import hello.practice.domain.user.entity.User;
 import hello.practice.domain.user.repository.UserRepository;
 import hello.practice.global.exception.BusinessException;
 import hello.practice.global.exception.ErrorCode;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,7 +41,7 @@ public class BoardCommandService {
         boardRepository.save(board);
         log.info("게시물 생성 완료: {}", board);
 
-        return BoardConverter.toCreateBoardResponseDto(board, user);
+        return BoardConverter.toCreateBoardResponseDtoFrom(board, user);
     }
 
     public BoardDto updateBoardById(Long boardId, UpdateBoardRequestDto updateBoardRequestDto) {
@@ -53,7 +52,7 @@ public class BoardCommandService {
 
         board.updateBoard(updateBoardRequestDto);
         log.info("게시물 수정 완료: {}", board);
-        BoardDto boardDto = BoardConverter.toBoardDto(board);
+        BoardDto boardDto = BoardConverter.toBoardDtoFrom(board);
         return boardDto;
     }
 

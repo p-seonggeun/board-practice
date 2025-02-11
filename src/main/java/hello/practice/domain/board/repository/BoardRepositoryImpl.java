@@ -9,8 +9,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import hello.practice.domain.board.dto.request.BoardSearchCondition;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.dto.response.QBoardDto;
-import hello.practice.domain.board.entity.QBoard;
-import hello.practice.domain.user.entity.QUser;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -4,6 +4,7 @@ import hello.practice.domain.board.entity.Board;
 import hello.practice.domain.board.service.BoardQueryService;
 import hello.practice.domain.comment.dto.request.CreateCommentRequestDto;
 import hello.practice.domain.comment.dto.response.CommentDto;
+import hello.practice.domain.comment.dto.response.CreateCommentResponseDto;
 import hello.practice.domain.comment.entity.Comment;
 import hello.practice.domain.comment.repository.CommentRepository;
 import hello.practice.domain.user.dto.request.CustomUserDetails;
@@ -25,7 +26,7 @@ public class CommentCommandService {
     private final UserQueryService userQueryService;
     private final BoardQueryService boardQueryService;
 
-    public CommentDto createComment(Long boardId, CreateCommentRequestDto createCommentRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public CreateCommentResponseDto createComment(Long boardId, CreateCommentRequestDto createCommentRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = userQueryService.getUserByUsername(customUserDetails.getUsername());
         log.info("사용자 조회 완료: {}", user);
         Board board = boardQueryService.findBoardById(boardId);
@@ -38,6 +39,6 @@ public class CommentCommandService {
         log.info("댓글 저장 완료: {}", comment);
 
         // N + 1 문제 예상
-        return CommentConverter.toCommentDtoFrom(comment);
+        return CommentConverter.toCreateCommentResponseDtoFrom(comment);
     }
 }

@@ -2,6 +2,7 @@ package hello.practice.domain.board.controller;
 
 import hello.practice.domain.board.dto.request.BoardSearchCondition;
 import hello.practice.domain.board.dto.request.UpdateBoardRequestDto;
+import hello.practice.domain.board.dto.response.BoardDetailDto;
 import hello.practice.domain.board.dto.response.BoardDto;
 import hello.practice.domain.board.dto.request.CreateBoardRequestDto;
 import hello.practice.domain.board.dto.response.CreateBoardResponseDto;
@@ -42,11 +43,11 @@ public class BoardController {
 
     // 게시물 상세 조회 기능
     @GetMapping("/boards/{id}")
-    public ResponseEntity<BoardDto> getBoardById(@PathVariable("id") Long boardId) {
+    public ResponseEntity<BoardDetailDto> getBoardById(@PathVariable("id") Long boardId) {
         boardCommandService.increaseBoardViewsById(boardId);
-        BoardDto boardDto = boardQueryService.findBoardDtoById(boardId);
+        BoardDetailDto boardDetailDto = boardQueryService.findBoardDetailDtoById(boardId);
 
-        return ResponseEntity.ok(boardDto);
+        return ResponseEntity.ok(boardDetailDto);
     }
 
     // 게시물 수정 기능

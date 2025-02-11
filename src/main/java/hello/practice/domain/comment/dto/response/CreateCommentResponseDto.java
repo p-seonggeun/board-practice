@@ -11,5 +11,4 @@ public class CreateCommentResponseDto {
     private String content;
     private String writer;
 
-
 }

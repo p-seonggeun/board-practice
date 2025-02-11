@@ -22,7 +22,7 @@ public class UserQueryService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, "사용자를 찾을 수 없습니다"));
 
-        return UserConverter.toUserDto(user);
+        return UserConverter.toUserDtoFrom(user);
     }
 
     public User getUserByUsername(String username) {

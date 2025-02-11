@@ -3,7 +3,6 @@ package hello.practice.domain.comment.service;
 import hello.practice.domain.board.entity.Board;
 import hello.practice.domain.board.service.BoardQueryService;
 import hello.practice.domain.comment.dto.request.CreateCommentRequestDto;
-import hello.practice.domain.comment.dto.response.CommentDto;
 import hello.practice.domain.comment.dto.response.CreateCommentResponseDto;
 import hello.practice.domain.comment.entity.Comment;
 import hello.practice.domain.comment.repository.CommentRepository;

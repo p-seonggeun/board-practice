@@ -30,6 +30,7 @@ public class BoardCommandService {
     private final BoardReactionRepository boardReactionRepository;
     private final UserQueryService userQueryService;
 
+    // 게시물 생성
     public CreateBoardResponseDto createBoard(CreateBoardRequestDto createBoardRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = userQueryService.getUserByUsername(customUserDetails.getUsername());
         Board board = new Board(createBoardRequestDto.getTitle(), createBoardRequestDto.getContent(), user);
@@ -40,6 +41,7 @@ public class BoardCommandService {
         return BoardConverter.toCreateBoardResponseDtoFrom(board, user);
     }
 
+    // 게시물 수정
     public BoardDto updateBoardById(Long boardId, UpdateBoardRequestDto updateBoardRequestDto) {
         Board board = boardRepository.findBoardByIdWithUser(boardId).orElseThrow(() -> {
             log.error("게시물을 찾을 수 없습니다.");
@@ -52,6 +54,7 @@ public class BoardCommandService {
         return boardDto;
     }
 
+    // 게시물 삭제
     public void deleteBoardById(Long boardId) {
         if (boardRepository.existsById(boardId)) {
             boardRepository.deleteById(boardId);
@@ -62,6 +65,7 @@ public class BoardCommandService {
         }
     }
 
+    // 게시물 조회수 증가
     public void increaseBoardViewsById(Long boardId) {
         Board board = boardRepository.findBoardByIdWithUser(boardId)
                 .orElseThrow(() -> {
@@ -73,6 +77,7 @@ public class BoardCommandService {
         log.info("게시물 조회수 증가 완료: {}", board.getViews());
     }
 
+    // 좋아요 토글
     public void toggleLike(Long boardId, CustomUserDetails customUserDetails) {
         // 게시물 찾기
         Board board = boardRepository.findBoardByIdWithUser(boardId)
@@ -111,6 +116,7 @@ public class BoardCommandService {
         log.info("좋아요 토글 완료: {}", board.getLikeCount());
     }
 
+    // 싫어요 토글
     public void toggleHate(Long boardId, CustomUserDetails customUserDetails) {
         Board board = boardRepository.findBoardByIdWithUser(boardId)
                 .orElseThrow(() -> {

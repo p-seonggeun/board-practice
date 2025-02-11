@@ -1,7 +1,6 @@
 package hello.practice.domain.comment.controller;
 
 import hello.practice.domain.comment.dto.request.CreateCommentRequestDto;
-import hello.practice.domain.comment.dto.response.CommentDto;
 import hello.practice.domain.comment.dto.response.CreateCommentResponseDto;
 import hello.practice.domain.comment.service.CommentCommandService;
 import hello.practice.domain.user.dto.request.CustomUserDetails;
@@ -22,9 +21,11 @@ public class CommentController {
 
     private final CommentCommandService commentCommandService;
 
+    // 게시물에 댓글 작성
     @PostMapping("/comments/{boardId}")
     public ResponseEntity<CreateCommentResponseDto> createComment(@PathVariable("boardId") Long boardId, @Valid @RequestBody CreateCommentRequestDto createCommentRequestDto, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         CreateCommentResponseDto createCommentResponseDto = commentCommandService.createComment(boardId, createCommentRequestDto, customUserDetails);
+
         return ResponseEntity.ok(createCommentResponseDto);
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hello.practice.domain.user.dto.request.CustomUserDetails;
 import hello.practice.domain.user.dto.request.UserDto;
 import hello.practice.domain.user.entity.Role;
-import hello.practice.domain.user.entity.User;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
 import hello.practice.global.redis.RedisService;

@@ -22,30 +22,12 @@ public class UserCommandService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    /**
-     * 앞 단에서 중복확인 모두 마친 상태
-     */
+
+    // 앞 단에서 중복확인 모두 마친 상태
     @Transactional
     public UserSignUpResponseDto signUp(UserSignUpRequestDto userSignUpRequestDto) {
 
-        boolean existsByUsername = userRepository.existsByUsername(userSignUpRequestDto.getUsername());
-        if (existsByUsername) {
-            log.error("이미 존재하는 아이디입니다. {}", userSignUpRequestDto.getUsername());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_USERNAME, "이미 존재하는 아이디입니다");
-        }
-
-        boolean existsByEmail = userRepository.existsByEmail(userSignUpRequestDto.getEmail());
-        if (existsByEmail) {
-            log.error("이미 존재하는 이메일입니다. {}", userSignUpRequestDto.getEmail());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_EMAIL, "이미 존재하는 이메일입니다");
-        }
-
-        boolean existsByNickname = userRepository.existsByNickname(userSignUpRequestDto.getNickname());
-        if (existsByNickname) {
-            log.error("이미 존재하는 닉네임입니다. {}", userSignUpRequestDto.getNickname());
-            throw new BusinessException(ErrorCode.ALREADY_EXISTS_NICKNAME, "이미 존재하는 닉네임입니다");
-        }
-
+        existsBy(userSignUpRequestDto);
 
         log.info("회원가입 시도: {}", userSignUpRequestDto);
         User user = User.builder()
@@ -59,6 +41,36 @@ public class UserCommandService {
         userRepository.save(user);
         log.info("회원가입 성공: {}", user);
         return UserConverter.toSignUpResponseDtoFrom(user);
+    }
+
+    private void existsBy(UserSignUpRequestDto userSignUpRequestDto) {
+        existsByUsername(userSignUpRequestDto);
+        existsByEmail(userSignUpRequestDto);
+        existsByNickname(userSignUpRequestDto);
+    }
+
+    private void existsByNickname(UserSignUpRequestDto userSignUpRequestDto) {
+        boolean existsByNickname = userRepository.existsByNickname(userSignUpRequestDto.getNickname());
+        if (existsByNickname) {
+            log.error("이미 존재하는 닉네임입니다. {}", userSignUpRequestDto.getNickname());
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_NICKNAME, "이미 존재하는 닉네임입니다");
+        }
+    }
+
+    private void existsByEmail(UserSignUpRequestDto userSignUpRequestDto) {
+        boolean existsByEmail = userRepository.existsByEmail(userSignUpRequestDto.getEmail());
+        if (existsByEmail) {
+            log.error("이미 존재하는 이메일입니다. {}", userSignUpRequestDto.getEmail());
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_EMAIL, "이미 존재하는 이메일입니다");
+        }
+    }
+
+    private void existsByUsername(UserSignUpRequestDto userSignUpRequestDto) {
+        boolean existsByUsername = userRepository.existsByUsername(userSignUpRequestDto.getUsername());
+        if (existsByUsername) {
+            log.error("이미 존재하는 아이디입니다. {}", userSignUpRequestDto.getUsername());
+            throw new BusinessException(ErrorCode.ALREADY_EXISTS_USERNAME, "이미 존재하는 아이디입니다");
+        }
     }
 }
 

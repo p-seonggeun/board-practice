@@ -1,7 +1,6 @@
 package hello.practice.global.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.practice.domain.token.repository.RefreshTokenRepository;
 import hello.practice.global.exception.ErrorCode;
 import hello.practice.global.exception.ErrorResponse;
 import hello.practice.global.jwt.JwtUtil;
@@ -26,7 +25,6 @@ import java.util.List;
 public class CustomLogoutFilter extends GenericFilterBean {
 
     private final JwtUtil jwtUtil;
-//    private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
 
     @Override
@@ -66,7 +64,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-//        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
         String username = jwtUtil.getUsername(refreshToken);
         boolean isExist = redisService.existRefreshToken(username);
         if (!isExist) {
@@ -74,7 +71,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-//        refreshTokenRepository.deleteByRefreshToken(refreshToken);
         Long remainingTtl = jwtUtil.getRemainingTtl(accessToken);
         redisService.addToBlacklist(accessToken, remainingTtl);
         redisService.deleteRefreshToken(username);
